@@ -15,17 +15,17 @@ public class Example
         TravelTracker travelTracker = new TravelTracker();
         travelTracker.connect(paddingtonReader, bakerStreetReader, kingsCrossReader);
         paddingtonReader.touch(myCard);
-        minutesPass(1);
+        minutesPass(5);
         bakerStreetReader.touch(myCard);
-        minutesPass(1);
+        minutesPass(15);
         bakerStreetReader.touch(myCard);
-        minutesPass(1);
+        minutesPass(10);
         kingsCrossReader.touch(myCard);
         travelTracker.chargeAccounts();
     }
 
     private static void minutesPass(int n) throws InterruptedException
     {
-        Thread.sleep(n * 60 * 100);
+        Thread.sleep(n * 60 * 1000);
     }
 }
