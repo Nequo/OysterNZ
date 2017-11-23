@@ -26,3 +26,6 @@ public abstract class JourneyEvent {
         return time;
     }
 }
+
+
+
