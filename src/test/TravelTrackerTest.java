@@ -1,10 +1,8 @@
-package test;
+package src.test;
 
 import com.tfl.billing.TravelTracker;
+import org.junit.Rule;
 import org.junit.Test;
-
-import java.math.BigDecimal;
-
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
 
@@ -13,6 +11,7 @@ import static org.junit.Assert.*;
 public class TravelTrackerTest {
     TravelTracker travelTracker = new TravelTracker();
 
-    @Test
-    
+    @Rule public JUnitRuleMockery context = new JUnitMockery();
+
+
 }
