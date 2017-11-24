@@ -31,15 +31,30 @@ public class TravelTracker implements ScanListener
     // for testing, pre-calculate cost for a traveler, add appropriate logs, check if correct
     private void totalJourneysFor(Customer customer)
     {
-        List<JourneyEvent> customerJourneyEvents = new ArrayList<JourneyEvent>();
-        for (JourneyEvent journeyEvent : eventLog)
-        {
-            if (journeyEvent.cardId().equals(customer.cardId()))
-            {
-                customerJourneyEvents.add(journeyEvent);
-            }
-        }
+        List<JourneyEvent> customerJourneyEvents = CustomerItinerary(customer);
 
+        List<Journey> journeys = Journeys(customerJourneyEvents);
+
+        BigDecimal customerTotal = TotalJourneyPrice(journeys);
+
+        PaymentsSystem.getInstance().charge(customer, journeys, roundToNearestPenny(customerTotal));
+    }
+
+    private BigDecimal TotalJourneyPrice(List<Journey> journeys) {
+        BigDecimal customerTotal = new BigDecimal(0);
+        for (Journey journey : journeys)
+        {
+            BigDecimal journeyPrice = OFF_PEAK_JOURNEY_PRICE;
+            if (peak(journey))
+            {
+                journeyPrice = PEAK_JOURNEY_PRICE;
+            }
+            customerTotal = customerTotal.add(journeyPrice);
+        }
+        return customerTotal;
+    }
+
+    private List<Journey> Journeys(List<JourneyEvent> customerJourneyEvents) {
         List<Journey> journeys = new ArrayList<Journey>();
 
         JourneyEvent start = null;
@@ -55,19 +70,19 @@ public class TravelTracker implements ScanListener
                 start = null;
             }
         }
+        return journeys;
+    }
 
-        BigDecimal customerTotal = new BigDecimal(0);
-        for (Journey journey : journeys)
+    private List<JourneyEvent> CustomerItinerary(Customer customer) {
+        List<JourneyEvent> customerJourneyEvents = new ArrayList<JourneyEvent>();
+        for (JourneyEvent journeyEvent : eventLog)
         {
-            BigDecimal journeyPrice = OFF_PEAK_JOURNEY_PRICE;
-            if (peak(journey))
+            if (journeyEvent.cardId().equals(customer.cardId()))
             {
-                journeyPrice = PEAK_JOURNEY_PRICE;
+                customerJourneyEvents.add(journeyEvent);
             }
-            customerTotal = customerTotal.add(journeyPrice);
         }
-
-        PaymentsSystem.getInstance().charge(customer, journeys, roundToNearestPenny(customerTotal));
+        return customerJourneyEvents;
     }
 
 
@@ -81,7 +96,7 @@ public class TravelTracker implements ScanListener
         return peak(journey.startTime()) || peak(journey.endTime());
     }
 
-    //check if time is peak
+
     private boolean peak(Date time)
     {
         Calendar calendar = Calendar.getInstance();
