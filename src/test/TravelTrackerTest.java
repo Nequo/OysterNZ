@@ -9,10 +9,9 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.*;
 
 
-
-public class TravelTrackerTest {
+public class TravelTrackerTest
+{
     TravelTracker travelTracker = new TravelTracker();
 
-    @Test
-    
+
 }
