@@ -3,8 +3,6 @@ package test;
 import com.tfl.billing.Journey;
 import com.tfl.billing.JourneyEnd;
 import com.tfl.billing.JourneyStart;
-import org.jmock.integration.junit4.JUnitRuleMockery;
-import org.junit.Rule;
 import org.junit.Test;
 
 import java.text.SimpleDateFormat;
@@ -16,8 +14,6 @@ import static org.junit.Assert.assertThat;
 
 public class JourneyTest
 {
-    @Rule
-    public JUnitRuleMockery context = new JUnitRuleMockery();
     private UUID cardExampleID = UUID.randomUUID();
     private UUID readerOriginID = UUID.randomUUID();
     private UUID readerDestinationID = UUID.randomUUID();

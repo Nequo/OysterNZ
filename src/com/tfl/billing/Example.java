@@ -14,13 +14,17 @@ public class Example
         OysterCardReader kingsCrossReader = OysterReaderLocator.atStation(Station.KINGS_CROSS);
         TravelTracker travelTracker = new TravelTracker();
         travelTracker.connect(paddingtonReader, bakerStreetReader, kingsCrossReader);
-        paddingtonReader.touch(myCard);
-        minutesPass(5);
-        bakerStreetReader.touch(myCard);
-        minutesPass(15);
-        bakerStreetReader.touch(myCard);
-        minutesPass(10);
-        kingsCrossReader.touch(myCard);
+        for (int i = 0; i < 5; i++)
+        {
+            paddingtonReader.touch(myCard);
+            minutesPass(1);
+            bakerStreetReader.touch(myCard);
+            minutesPass(2);
+            bakerStreetReader.touch(myCard);
+            minutesPass(3);
+            kingsCrossReader.touch(myCard);
+            minutesPass(4);
+        }
         travelTracker.chargeAccounts();
     }
 

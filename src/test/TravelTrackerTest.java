@@ -11,7 +11,7 @@ import static org.junit.Assert.assertThat;
 
 
 public class TravelTrackerTest {
-
+/*
 <<<<<<< HEAD
 public class TravelTrackerTest
 {
@@ -35,6 +35,6 @@ public class TravelTrackerTest
         travelTracker.chargeAccounts();
     }
 
->>>>>>> TravelTracker_Refactoring
+>>>>>>> TravelTracker_Refactoring*/
 
 }
