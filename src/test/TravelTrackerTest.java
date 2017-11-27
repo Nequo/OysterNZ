@@ -1,11 +1,7 @@
 package src.test;
 
-import com.tfl.billing.TravelTracker;
 import org.jmock.Expectations;
 import org.jmock.integration.junit4.JUnitRuleMockery;
-import org.junit.Rule;
-import org.junit.Test;
-import com.tfl.billing.PaymentSystem;
 
 import static org.junit.Assert.assertThat;
 
