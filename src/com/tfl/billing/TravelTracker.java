@@ -3,7 +3,6 @@ package com.tfl.billing;
 import com.oyster.*;
 import com.tfl.external.Customer;
 import com.tfl.external.CustomerDatabase;
-import com.tfl.external.PaymentsSystem;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -13,18 +12,19 @@ public class TravelTracker implements ScanListener
     private final List<JourneyEvent> eventLog = new ArrayList<JourneyEvent>();
     private final Set<UUID> currentlyTravelling = new HashSet<UUID>();
 
-    public void chargeAccounts()
+
+    public void chargeAccounts(PaymentService paymentsystem)
     {
         CustomerDatabase customerDatabase = CustomerDatabase.getInstance();
 
         List<Customer> customers = customerDatabase.getCustomers();
         for (Customer customer : customers)
         {
-            totalJourneysFor(customer);
+            totalJourneysFor(customer, paymentsystem);
         }
     }
 
-    private void totalJourneysFor(Customer customer)
+    private void totalJourneysFor(Customer customer, PaymentService paymentsystem)
     {
         List<JourneyEvent> customerJourneyEvents = CustomerItinerary(customer);
 
@@ -32,13 +32,13 @@ public class TravelTracker implements ScanListener
 
         BigDecimal customerTotal = JourneyPriceCalculator.TotalJourneyPrice(journeys);
 
-        PaymentsSystem.getInstance().charge(customer, journeys, roundToNearestPenny(customerTotal));
+        paymentsystem.charge(customer, journeys, customerTotal);
     }
 
 
     private List<Journey> Journeys(List<JourneyEvent> customerJourneyEvents)
     {
-        List<Journey> journeys = new ArrayList<Journey>();
+        List<Journey> journeys = new ArrayList<>();
 
         JourneyEvent start = null;
         for (JourneyEvent event : customerJourneyEvents)
@@ -69,15 +69,17 @@ public class TravelTracker implements ScanListener
         return customerJourneyEvents;
     }
 
-
-    private BigDecimal roundToNearestPenny(BigDecimal poundsAndPence)
-    {
-        return poundsAndPence.setScale(2, BigDecimal.ROUND_HALF_UP);
-    }
-
     public void connect(OysterCardReader... cardReaders)
     {
         for (OysterCardReader cardReader : cardReaders)
+        {
+            cardReader.register(this);
+        }
+    }
+
+    public void connect(CardReader... cardReaders)
+    {
+        for (CardReader cardReader : cardReaders)
         {
             cardReader.register(this);
         }
