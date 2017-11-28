@@ -13,12 +13,9 @@ public class TravelTracker implements ScanListener
     private final Set<UUID> currentlyTravelling = new HashSet<UUID>();
 
 
-    public void chargeAccounts(PaymentService paymentsystem)
+    public void chargeAccounts(PaymentService paymentsystem, List<Customer> customerDatabase)
     {
-        CustomerDatabase customerDatabase = CustomerDatabase.getInstance();
-
-        List<Customer> customers = customerDatabase.getCustomers();
-        for (Customer customer : customers)
+        for (Customer customer : customerDatabase)
         {
             totalJourneysFor(customer, paymentsystem);
         }
@@ -77,13 +74,6 @@ public class TravelTracker implements ScanListener
         }
     }
 
-    public void connect(CardReader... cardReaders)
-    {
-        for (CardReader cardReader : cardReaders)
-        {
-            cardReader.register(this);
-        }
-    }
 
     @Override
     public void cardScanned(UUID cardId, UUID readerId)
