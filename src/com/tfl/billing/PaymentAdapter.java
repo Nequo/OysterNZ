@@ -8,6 +8,12 @@ import java.util.List;
 
 public class PaymentAdapter implements PaymentService {
 
+    private static PaymentAdapter instance = new PaymentAdapter();
+
+    private PaymentAdapter(){}
+
+    public static PaymentAdapter getInstance(){return instance;}
+
     @Override
     public void charge(Customer customer, List<Journey> journeys, BigDecimal customerTotal){
         PaymentsSystem.getInstance().charge(customer, journeys, roundToNearestPenny(customerTotal));

@@ -4,12 +4,10 @@ import com.tfl.external.Customer;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public interface Database {
 
-    void addCustomer(Customer customer);
-
     List<Customer> getCustomers();
-
-    List<Customer> getList();
+    boolean isRegisteredUUID(UUID cardId);
 }

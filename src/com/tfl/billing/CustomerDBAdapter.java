@@ -3,30 +3,25 @@ package com.tfl.billing;
 import com.tfl.external.Customer;
 import com.tfl.external.CustomerDatabase;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class CustomerDBAdapter implements Database {
 
+    private static CustomerDBAdapter instance = new CustomerDBAdapter();
     private CustomerDatabase customerDatabase = CustomerDatabase.getInstance();
-    private List<Customer> customers = new ArrayList<Customer>();
 
-    @Override
-    public void addCustomer(Customer customer){
-        customers.add(customer);
-    }
+    private CustomerDBAdapter(){}
+
+    public static CustomerDBAdapter getInstance(){return instance;}
 
     @Override
     public List<Customer> getCustomers(){
         return customerDatabase.getCustomers();
     }
 
-    public List<Customer> getList(){
-        return customers;
-    }
-
-
-
+    @Override
+    public boolean isRegisteredUUID(UUID cardID){return customerDatabase.isRegisteredId(cardID);}
 
 
 }
