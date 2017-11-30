@@ -7,11 +7,11 @@ import static org.junit.Assert.assertTrue;
 
 public class CustomerDBAdapterTest {
 
+    CustomerDBAdapter database = new CustomerDBAdapter();
+
+
     @Test
     public void databaseIsInitialisedEmpty() {
-        CustomerDBAdapter database = new CustomerDBAdapter();
         assertTrue(database.getList().isEmpty());
     }
-
-    public void 
 }
