@@ -8,10 +8,13 @@ import java.util.List;
 public class JourneyPriceCalculator
 {
     //Peak long: £3.80 ; Peak short: £2.90 ; Off-peak long: £2.70 ; Off-peak short: £1.60
-    static private final BigDecimal OFF_PEAK_SHORT_JOURNEY_PRICE = new BigDecimal(1.60);
-    static private final BigDecimal OFF_PEAK_LONG_JOURNEY_PRICE = new BigDecimal(2.70);
-    static private final BigDecimal PEAK_LONG_JOURNEY_PRICE = new BigDecimal(3.80);
-    static private final BigDecimal PEAK_SHORT_JOURNEY_PRICE = new BigDecimal(2.90);
+    static public final BigDecimal OFF_PEAK_SHORT_JOURNEY_PRICE = new BigDecimal(1.60).setScale(2, BigDecimal.ROUND_HALF_UP);
+    static public final BigDecimal OFF_PEAK_LONG_JOURNEY_PRICE = new BigDecimal(2.70).setScale(2, BigDecimal.ROUND_HALF_UP);
+    static public final BigDecimal PEAK_LONG_JOURNEY_PRICE = new BigDecimal(3.80).setScale(2, BigDecimal.ROUND_HALF_UP);
+    static public final BigDecimal PEAK_SHORT_JOURNEY_PRICE = new BigDecimal(2.90).setScale(2, BigDecimal.ROUND_HALF_UP);
+    static public final BigDecimal PEAK_CAP_PRICE = new BigDecimal(9.00).setScale(2, BigDecimal.ROUND_HALF_UP);
+    static public final BigDecimal OFF_PEAK_CAP_PRICE = new BigDecimal(7.00).setScale(2, BigDecimal.ROUND_HALF_UP);
+    static private final int LONG_JOURNEY_MINIMUM_DURATION_IN_MIN = 25;
 
 
     static public BigDecimal TotalJourneyPrice(List<Journey> journeys)
@@ -21,38 +24,36 @@ public class JourneyPriceCalculator
         BigDecimal customerTotal = new BigDecimal(0);
         for (Journey journey : journeys)//iterates through journeys
         {
-            BigDecimal journeyPrice;
-            //add peak/offPeak price for each journey to total price
+            //add peak/offPeak price for each journey_event to total price
             if (peak(journey))
             {
                 wasAnyJourneyPeak = true;
-                if (journey.durationSeconds() < 60 * 2)
+                if (journey.durationSeconds() < 60 * LONG_JOURNEY_MINIMUM_DURATION_IN_MIN)
                 {
-                    journeyPrice = PEAK_SHORT_JOURNEY_PRICE;
+                    customerTotal = customerTotal.add(PEAK_SHORT_JOURNEY_PRICE);
                 } else {
-                    journeyPrice = PEAK_LONG_JOURNEY_PRICE;
+                    customerTotal = customerTotal.add(PEAK_LONG_JOURNEY_PRICE);
                 }
 
             } else
             {
-                if (journey.durationSeconds() < 60 * 2)
+                if (journey.durationSeconds() < 60 * LONG_JOURNEY_MINIMUM_DURATION_IN_MIN)
                 {
-                    journeyPrice = OFF_PEAK_SHORT_JOURNEY_PRICE;
+                    customerTotal = customerTotal.add(OFF_PEAK_SHORT_JOURNEY_PRICE);
                 } else {
-                    journeyPrice = OFF_PEAK_LONG_JOURNEY_PRICE;
+                    customerTotal = customerTotal.add(OFF_PEAK_LONG_JOURNEY_PRICE);
                 }
 
             }
-            customerTotal = customerTotal.add(journeyPrice);
         }
 
         //checks for caps
-        if (wasAnyJourneyPeak && customerTotal.compareTo(new BigDecimal(9.00)) != -1)
+        if (wasAnyJourneyPeak && customerTotal.compareTo(PEAK_CAP_PRICE) != -1)
         {
-            return new BigDecimal(9.00);
-        } else if (!wasAnyJourneyPeak && customerTotal.compareTo(new BigDecimal(7.00)) != -1)
+            return PEAK_CAP_PRICE;
+        } else if (!wasAnyJourneyPeak && customerTotal.compareTo(OFF_PEAK_CAP_PRICE) != -1)
         {
-            return new BigDecimal(7.00);
+            return OFF_PEAK_CAP_PRICE;
         }
 
         return customerTotal;

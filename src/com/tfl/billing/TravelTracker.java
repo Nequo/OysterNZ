@@ -1,106 +1,85 @@
 package com.tfl.billing;
 
-import com.oyster.*;
+import com.oyster.OysterCardReader;
+import com.oyster.ScanListener;
+import com.tfl.billing.database.CustomerDBAdapter;
+import com.tfl.billing.database.Database;
+import com.tfl.billing.journey_event.JourneyEnd;
+import com.tfl.billing.journey_event.JourneyEvent;
+import com.tfl.billing.journey_event.JourneyStart;
+import com.tfl.billing.payment.PaymentAdapter;
+import com.tfl.billing.payment.PaymentService;
 import com.tfl.external.Customer;
 import com.tfl.external.CustomerDatabase;
-import com.tfl.external.PaymentsSystem;
 
 import java.math.BigDecimal;
 import java.util.*;
 
-public class TravelTracker implements ScanListener
-{
+public class TravelTracker implements ScanListener {
     private final List<JourneyEvent> eventLog = new ArrayList<JourneyEvent>();
     private final Set<UUID> currentlyTravelling = new HashSet<UUID>();
 
-    public void chargeAccounts()
-    {
-        CustomerDatabase customerDatabase = CustomerDatabase.getInstance();
+    private Database customerDatabase;
+    private PaymentService paymentService;
 
-        List<Customer> customers = customerDatabase.getCustomers();
-        for (Customer customer : customers)
-        {
+    public TravelTracker(){
+        this.customerDatabase = CustomerDBAdapter.getInstance();
+        this.paymentService = PaymentAdapter.getInstance();
+    }
+
+    public TravelTracker(Database customerDatabase, PaymentService paymentService) {
+        this.customerDatabase = customerDatabase;
+        this.paymentService = paymentService;
+    }
+
+
+    public void chargeAccounts() {
+        for (Customer customer : customerDatabase.getCustomers()) {
             totalJourneysFor(customer);
         }
     }
 
-    private void totalJourneysFor(Customer customer)
-    {
-        List<JourneyEvent> customerJourneyEvents = CustomerItinerary(customer);
-
-        List<Journey> journeys = Journeys(customerJourneyEvents);
-
-        BigDecimal customerTotal = JourneyPriceCalculator.TotalJourneyPrice(journeys);
-
-        PaymentsSystem.getInstance().charge(customer, journeys, roundToNearestPenny(customerTotal));
-    }
-
-
-    private List<Journey> Journeys(List<JourneyEvent> customerJourneyEvents)
-    {
+    private void totalJourneysFor(Customer customer) {
+        List<JourneyEvent> customerJourneyEvents = new ArrayList<JourneyEvent>();
+        for (JourneyEvent journeyEvent : eventLog) {
+            if (journeyEvent.cardId().equals(customer.cardId())) {
+                customerJourneyEvents.add(journeyEvent);
+            }
+        }
         List<Journey> journeys = new ArrayList<Journey>();
-
         JourneyEvent start = null;
-        for (JourneyEvent event : customerJourneyEvents)
-        {
-            if (event instanceof JourneyStart)
-            {
+        for (JourneyEvent event : customerJourneyEvents) {
+            if (event instanceof JourneyStart) {
                 start = event;
             }
-            if (event instanceof JourneyEnd && start != null)
-            {
+            if (event instanceof JourneyEnd && start != null) {
                 journeys.add(new Journey(start, event));
                 start = null;
             }
         }
-        return journeys;
+        BigDecimal customerTotal = JourneyPriceCalculator.TotalJourneyPrice(journeys);
+
+        paymentService.charge(customer, journeys, customerTotal);
     }
 
-    private List<JourneyEvent> CustomerItinerary(Customer customer)
-    {
-        List<JourneyEvent> customerJourneyEvents = new ArrayList<JourneyEvent>();
-        for (JourneyEvent journeyEvent : eventLog)
-        {
-            if (journeyEvent.cardId().equals(customer.cardId()))
-            {
-                customerJourneyEvents.add(journeyEvent);
-            }
-        }
-        return customerJourneyEvents;
-    }
-
-
-    private BigDecimal roundToNearestPenny(BigDecimal poundsAndPence)
-    {
-        return poundsAndPence.setScale(2, BigDecimal.ROUND_HALF_UP);
-    }
-
-    public void connect(OysterCardReader... cardReaders)
-    {
-        for (OysterCardReader cardReader : cardReaders)
-        {
+    public void connect(OysterCardReader... cardReaders) {
+        for (OysterCardReader cardReader : cardReaders) {
             cardReader.register(this);
         }
     }
 
     @Override
-    public void cardScanned(UUID cardId, UUID readerId)
-    {
-        if (currentlyTravelling.contains(cardId))
-        {
+    public void cardScanned(UUID cardId, UUID readerId) {
+        if (currentlyTravelling.contains(cardId)) {
             eventLog.add(new JourneyEnd(cardId, readerId));
             currentlyTravelling.remove(cardId);
-        } else
-        {
-            if (CustomerDatabase.getInstance().isRegisteredId(cardId))
-            {
+        } else {
+            if (CustomerDatabase.getInstance().isRegisteredId(cardId)) {
                 currentlyTravelling.add(cardId);
                 eventLog.add(new JourneyStart(cardId, readerId));
-            } else
-            {
+            } else {
                 throw new UnknownOysterCardException(cardId);
             }
         }
     }
-
 }
