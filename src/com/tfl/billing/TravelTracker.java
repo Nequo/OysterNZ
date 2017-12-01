@@ -12,10 +12,13 @@ public class TravelTracker implements ScanListener {
     private final List<JourneyEvent> eventLog = new ArrayList<JourneyEvent>();
     private final Set<UUID> currentlyTravelling = new HashSet<UUID>();
 
-    private Database customerDatabase = CustomerDBAdapter.getInstance();
-    private PaymentService paymentService = PaymentAdapter.getInstance();
+    private Database customerDatabase;
+    private PaymentService paymentService;
 
-    public TravelTracker(){}
+    public TravelTracker(){
+        this.customerDatabase = CustomerDBAdapter.getInstance();
+        this.paymentService = PaymentAdapter.getInstance();
+    }
 
     public TravelTracker(Database customerDatabase, PaymentService paymentService) {
         this.customerDatabase = customerDatabase;
