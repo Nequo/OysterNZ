@@ -56,7 +56,7 @@ public class TravelTrackerTest
         travelTracker.chargeAccounts();
     }
 
-    
+
     @Test
     public void eachCustomerInTheListIsChargedOnce(){
 

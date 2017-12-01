@@ -31,6 +31,7 @@ public class TravelTracker implements ScanListener {
             totalJourneysFor(customer);
         }
     }
+
     private void totalJourneysFor(Customer customer) {
         List<JourneyEvent> customerJourneyEvents = new ArrayList<JourneyEvent>();
         for (JourneyEvent journeyEvent : eventLog) {
