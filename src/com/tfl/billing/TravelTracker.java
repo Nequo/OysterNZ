@@ -2,10 +2,8 @@ package com.tfl.billing;
 
 import com.oyster.OysterCardReader;
 import com.oyster.ScanListener;
-import com.tfl.billing.*;
 import com.tfl.external.Customer;
 import com.tfl.external.CustomerDatabase;
-import com.tfl.external.PaymentsSystem;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -14,10 +12,19 @@ public class TravelTracker implements ScanListener {
     private final List<JourneyEvent> eventLog = new ArrayList<JourneyEvent>();
     private final Set<UUID> currentlyTravelling = new HashSet<UUID>();
 
+    private Database customerDatabase = CustomerDBAdapter.getInstance();
+    private PaymentService paymentService = PaymentAdapter.getInstance();
+
+    public TravelTracker(){}
+
+    public TravelTracker(Database customerDatabase, PaymentService paymentService) {
+        this.customerDatabase = customerDatabase;
+        this.paymentService = paymentService;
+    }
+
+
     public void chargeAccounts() {
-        Database customerDatabase = CustomerDBAdapter.getInstance();
-        List<Customer> customers = customerDatabase.getCustomers();
-        for (Customer customer : customers) {
+        for (Customer customer : customerDatabase.getCustomers()) {
             totalJourneysFor(customer);
         }
     }
@@ -41,7 +48,7 @@ public class TravelTracker implements ScanListener {
         }
         BigDecimal customerTotal = JourneyPriceCalculator.TotalJourneyPrice(journeys);
 
-        PaymentAdapter.getInstance().charge(customer, journeys, customerTotal);
+        paymentService.charge(customer, journeys, customerTotal);
     }
 
     public void connect(OysterCardReader... cardReaders) {
@@ -49,6 +56,7 @@ public class TravelTracker implements ScanListener {
             cardReader.register(this);
         }
     }
+
     @Override
     public void cardScanned(UUID cardId, UUID readerId) {
         if (currentlyTravelling.contains(cardId)) {
