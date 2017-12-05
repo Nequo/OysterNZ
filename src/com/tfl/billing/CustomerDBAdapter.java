@@ -1,4 +1,4 @@
-package com.tfl.billing.database;
+package com.tfl.billing;
 
 import com.tfl.external.Customer;
 import com.tfl.external.CustomerDatabase;

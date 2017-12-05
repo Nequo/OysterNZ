@@ -1,4 +1,4 @@
-package com.tfl.billing.journey_event;
+package com.tfl.billing;
 
 import java.util.UUID;
 

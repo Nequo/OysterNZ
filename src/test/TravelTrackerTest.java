@@ -4,9 +4,9 @@ import com.oyster.OysterCard;
 import com.tfl.billing.*;
 
 
-import com.tfl.billing.database.Database;
+import com.tfl.billing.Database;
 import com.tfl.billing.Journey;
-import com.tfl.billing.payment.PaymentService;
+import com.tfl.billing.PaymentService;
 import com.tfl.external.Customer;
 import org.jmock.Expectations;
 import org.jmock.integration.junit4.JUnitRuleMockery;

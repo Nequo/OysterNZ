@@ -1,6 +1,6 @@
 package test;
 
-import com.tfl.billing.journey_event.JourneyEventInterface;
+import com.tfl.billing.JourneyEventInterface;
 
 import java.util.UUID;
 

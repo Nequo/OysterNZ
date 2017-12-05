@@ -65,10 +65,8 @@ public class FakeJourneyCreator
     protected Journey createFakeJourney(long setStartTime, int setJourneyInMin)
     {
         UUID cardExampleID = UUID.randomUUID();
-        UUID readerOriginID = UUID.randomUUID();
-        UUID readerDestinationID = UUID.randomUUID();
-        FakeJourneyEvent journeyStart = new FakeJourneyEvent(cardExampleID, readerOriginID, setStartTime);
-        FakeJourneyEvent journeyEnd = new FakeJourneyEvent(cardExampleID, readerDestinationID, setStartTime + setJourneyInMin * 60 * 1000);
+        FakeJourneyEvent journeyStart = new FakeJourneyEvent(cardExampleID, UUID.randomUUID(), setStartTime);
+        FakeJourneyEvent journeyEnd = new FakeJourneyEvent(cardExampleID, UUID.randomUUID(), setStartTime + setJourneyInMin * 60 * 1000);
         return new Journey(journeyStart, journeyEnd);
     }
 
