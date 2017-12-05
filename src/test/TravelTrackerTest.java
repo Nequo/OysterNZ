@@ -6,6 +6,7 @@ import com.tfl.billing.*;
 
 import com.tfl.external.Customer;
 import org.jmock.Expectations;
+import org.jmock.api.Expectation;
 import org.jmock.integration.junit4.JUnitRuleMockery;
 import org.junit.Rule;
 import org.junit.Test;
@@ -23,6 +24,8 @@ public class TravelTrackerTest
     public JUnitRuleMockery context = new JUnitRuleMockery();
     PaymentService payment = context.mock(PaymentService.class);
     Database database = context.mock(Database.class);
+
+
     TravelTracker travelTracker = new TravelTracker(database, payment);
 
 
@@ -69,4 +72,6 @@ public class TravelTrackerTest
 
         travelTracker.chargeAccounts();
     }
+
+
 }

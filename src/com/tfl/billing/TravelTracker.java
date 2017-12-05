@@ -3,7 +3,6 @@ package com.tfl.billing;
 import com.oyster.OysterCardReader;
 import com.oyster.ScanListener;
 import com.tfl.external.Customer;
-import com.tfl.external.CustomerDatabase;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -33,27 +32,18 @@ public class TravelTracker implements ScanListener {
     }
 
     private void totalJourneysFor(Customer customer) {
-        List<JourneyEvent> customerJourneyEvents = new ArrayList<JourneyEvent>();
-        for (JourneyEvent journeyEvent : eventLog) {
-            if (journeyEvent.cardId().equals(customer.cardId())) {
-                customerJourneyEvents.add(journeyEvent);
-            }
-        }
-        List<Journey> journeys = new ArrayList<Journey>();
-        JourneyEvent start = null;
-        for (JourneyEvent event : customerJourneyEvents) {
-            if (event instanceof JourneyStart) {
-                start = event;
-            }
-            if (event instanceof JourneyEnd && start != null) {
-                journeys.add(new Journey(start, event));
-                start = null;
-            }
-        }
+
+        Itinerary itinerary = new Itinerary(eventLog);
+
+        itinerary.generateItinerary(customer);
+
+        List<Journey> journeys = itinerary.getCustomerItinerary();
+
         BigDecimal customerTotal = JourneyPriceCalculator.TotalJourneyPrice(journeys);
 
         paymentService.charge(customer, journeys, customerTotal);
     }
+
 
     public void connect(OysterCardReader... cardReaders) {
         for (OysterCardReader cardReader : cardReaders) {
@@ -67,7 +57,7 @@ public class TravelTracker implements ScanListener {
             eventLog.add(new JourneyEnd(cardId, readerId));
             currentlyTravelling.remove(cardId);
         } else {
-            if (CustomerDatabase.getInstance().isRegisteredId(cardId)) {
+            if (CustomerDBAdapter.getInstance().isRegisteredUUID(cardId)) {
                 currentlyTravelling.add(cardId);
                 eventLog.add(new JourneyStart(cardId, readerId));
             } else {
