@@ -10,11 +10,13 @@ public class FakeJourneyEvent
     private final UUID cardId;
     private final UUID readerId;
     private final long time;
+    private final int eventType;
 
-    public FakeJourneyEvent(UUID cardId, UUID readerId, long time)
+    public FakeJourneyEvent(UUID cardId, UUID readerId, int eventType, long time)
     {
         this.cardId = cardId;
         this.readerId = readerId;
+        this.eventType = eventType;
         this.time = time;
     }
 
@@ -31,5 +33,10 @@ public class FakeJourneyEvent
     public long time()
     {
         return time;
+    }
+
+    public int getEventType()
+    {
+        return eventType;
     }
 }

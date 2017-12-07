@@ -7,7 +7,8 @@ import com.tfl.underground.Station;
 
 public class Example
 {
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws Exception
+    {
         OysterCard myCard = new OysterCard("38400000-8cf0-11bd-b23e-10b96e4ef00d");
         OysterCardReader paddingtonReader = OysterReaderLocator.atStation(Station.PADDINGTON);
         OysterCardReader bakerStreetReader = OysterReaderLocator.atStation(Station.BAKER_STREET);

@@ -41,7 +41,10 @@ public class Journey
         return new Date(start.time());
     }
 
-    public Date endTime() { return new Date(end.time()); }
+    public Date endTime()
+    {
+        return new Date(end.time());
+    }
 
     public int durationSeconds()
     {

@@ -21,37 +21,37 @@ public class JourneyTest
 
 
     @Test
-    public void JourneyDurationMinutesTest() throws InterruptedException
+    public void JourneyDurationMinutesTest()
     {
         assertThat(journey.durationMinutes(), is("1:0"));
     }
 
     @Test
-    public void JourneyDurationSecondsTest() throws InterruptedException
+    public void JourneyDurationSecondsTest()
     {
-        assertThat(journey.durationSeconds(), is( 60));
+        assertThat(journey.durationSeconds(), is(60));
     }
 
     @Test
-    public void originIdTest() throws InterruptedException
+    public void originIdTest()
     {
         assertThat(journey.originId(), is(readerOriginID));
     }
 
     @Test
-    public void destinationIdTest() throws InterruptedException
+    public void destinationIdTest()
     {
         assertThat(journey.destinationId(), is(readerDestinationID));
     }
 
     @Test
-    public void startTimeTest() throws InterruptedException
+    public void startTimeTest()
     {
         assertThat(journey.startTime(), is(new Date(startTime)));
     }
 
     @Test
-    public void endTimeTest() throws InterruptedException
+    public void endTimeTest()
     {
         assertThat(journey.endTime(), is(new Date(startTime + journeyLenghtInMin * 60 * 1000)));
     }

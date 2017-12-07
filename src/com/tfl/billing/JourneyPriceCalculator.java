@@ -31,7 +31,8 @@ public class JourneyPriceCalculator
                 if (journey.durationSeconds() < 60 * LONG_JOURNEY_MINIMUM_DURATION_IN_MIN)
                 {
                     customerTotal = customerTotal.add(PEAK_SHORT_JOURNEY_PRICE);
-                } else {
+                } else
+                {
                     customerTotal = customerTotal.add(PEAK_LONG_JOURNEY_PRICE);
                 }
 
@@ -40,14 +41,19 @@ public class JourneyPriceCalculator
                 if (journey.durationSeconds() < 60 * LONG_JOURNEY_MINIMUM_DURATION_IN_MIN)
                 {
                     customerTotal = customerTotal.add(OFF_PEAK_SHORT_JOURNEY_PRICE);
-                } else {
+                } else
+                {
                     customerTotal = customerTotal.add(OFF_PEAK_LONG_JOURNEY_PRICE);
                 }
 
             }
         }
 
-        //checks for caps
+        return checkForCaps(customerTotal, wasAnyJourneyPeak);
+    }
+
+    static private BigDecimal checkForCaps(BigDecimal customerTotal, boolean wasAnyJourneyPeak)
+    {
         if (wasAnyJourneyPeak && customerTotal.compareTo(PEAK_CAP_PRICE) != -1)
         {
             return PEAK_CAP_PRICE;

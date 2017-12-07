@@ -1,12 +1,10 @@
 package test;
 
 import com.oyster.OysterCard;
-import com.tfl.billing.*;
-
-
 import com.tfl.billing.Database;
 import com.tfl.billing.Journey;
 import com.tfl.billing.PaymentService;
+import com.tfl.billing.TravelTracker;
 import com.tfl.external.Customer;
 import org.jmock.Expectations;
 import org.jmock.integration.junit4.JUnitRuleMockery;
@@ -16,20 +14,27 @@ import org.junit.Test;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 
 public class TravelTrackerTest
 {
-
-
     @Rule
     public JUnitRuleMockery context = new JUnitRuleMockery();
     PaymentService payment = context.mock(PaymentService.class);
     Database database = context.mock(Database.class);
     TravelTracker travelTracker = new TravelTracker(database, payment);
+    private final UUID cardExampleID = UUID.randomUUID();
+    private final UUID readerOriginID = UUID.randomUUID();
+    private final UUID readerDestinationID = UUID.randomUUID();
+    private final long startTime = 1493701200000L;
+    private final int journeyLengthInMin = 1;
+    private final Journey journey = new FakeJourneyCreator().createFakeJourney
+            (startTime, journeyLengthInMin, cardExampleID, readerOriginID, readerDestinationID);
 
 
-    private List<Customer> customers = new ArrayList<Customer>() {
+    private List<Customer> customers = new ArrayList<Customer>()
+    {
         {
             this.add(new Customer("Fred Bloggs", new OysterCard("38400000-8cf0-11bd-b23e-10b96e4ef00d")));
             this.add(new Customer("Shelly Cooper", new OysterCard("3f1b3b55-f266-4426-ba1b-bcc506541866")));
@@ -42,18 +47,23 @@ public class TravelTrackerTest
 
 
     @Test
-    public void theDatabaseReturnsTheExpectedDataSet(){
-
-        context.checking(new Expectations(){{
-            oneOf(database).getCustomers();will(returnValue(customers));
+    public void theDatabaseReturnsTheExpectedDataSet()
+    {
+        context.checking(new Expectations()
+        {{
+            oneOf(database).getCustomers();
+            will(returnValue(customers));
         }});
 
         database.getCustomers();
     }
 
+
     @Test
-    public void theDatabaseIsCalledWhenYouChargeTheAccounts(){
-        context.checking(new Expectations(){{
+    public void theDatabaseIsCalledWhenYouChargeTheAccounts()
+    {
+        context.checking(new Expectations()
+        {{
             exactly(1).of(database).getCustomers();
         }});
         travelTracker.chargeAccounts();
@@ -61,10 +71,12 @@ public class TravelTrackerTest
 
 
     @Test
-    public void eachCustomerInTheListIsChargedOnce(){
-
-        context.checking(new Expectations(){{
-            oneOf(database).getCustomers(); will(returnValue(customers));
+    public void eachCustomerInTheListIsChargedOnce()
+    {
+        context.checking(new Expectations()
+        {{
+            oneOf(database).getCustomers();
+            will(returnValue(customers));
             exactly(1).of(payment).charge(customers.get(0), journeys, total);
             exactly(1).of(payment).charge(customers.get(1), journeys, total);
             exactly(1).of(payment).charge(customers.get(2), journeys, total);
@@ -72,4 +84,5 @@ public class TravelTrackerTest
 
         travelTracker.chargeAccounts();
     }
+
 }

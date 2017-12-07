@@ -8,12 +8,8 @@ import java.util.List;
 
 public class PaymentAdapter implements PaymentService
 {
-
     private static PaymentAdapter instance = new PaymentAdapter();
 
-    private PaymentAdapter()
-    {
-    }
 
     public static PaymentAdapter getInstance()
     {
@@ -25,6 +21,4 @@ public class PaymentAdapter implements PaymentService
     {
         PaymentsSystem.getInstance().charge(customer, journeys, customerTotal);
     }
-
-
 }

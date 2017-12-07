@@ -7,6 +7,7 @@ import com.tfl.external.Customer;
 import java.math.BigDecimal;
 import java.util.List;
 
-public interface PaymentService {
+public interface PaymentService
+{
     void charge(Customer customer, List<Journey> journeys, BigDecimal customerTotal);
 }

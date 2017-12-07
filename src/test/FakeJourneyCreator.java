@@ -1,6 +1,7 @@
 package test;
 
 import com.tfl.billing.Journey;
+import com.tfl.billing.JourneyEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,11 +14,6 @@ public class FakeJourneyCreator
     protected static final int mixJourneys = 2;
 
 
-    public FakeJourneyCreator()
-    {
-    }
-
-
     //do not add more then 8 long off-peak journeys, in order not get peak time
     protected List<Journey> getFakeJourneys(int numberOfJourneys, boolean inPeakTime, int typesOfJourneys)
     {
@@ -28,7 +24,6 @@ public class FakeJourneyCreator
             fakeCurrentTime = 1493717400000L;
         else
             fakeCurrentTime = 1493701200000L;
-
 
         switch (typesOfJourneys)
         {
@@ -65,15 +60,15 @@ public class FakeJourneyCreator
     protected Journey createFakeJourney(long setStartTime, int setJourneyInMin)
     {
         UUID cardExampleID = UUID.randomUUID();
-        FakeJourneyEvent journeyStart = new FakeJourneyEvent(cardExampleID, UUID.randomUUID(), setStartTime);
-        FakeJourneyEvent journeyEnd = new FakeJourneyEvent(cardExampleID, UUID.randomUUID(), setStartTime + setJourneyInMin * 60 * 1000);
+        FakeJourneyEvent journeyStart = new FakeJourneyEvent(cardExampleID, UUID.randomUUID(), JourneyEvent.START, setStartTime);
+        FakeJourneyEvent journeyEnd = new FakeJourneyEvent(cardExampleID, UUID.randomUUID(), JourneyEvent.END, setStartTime + setJourneyInMin * 60 * 1000);
         return new Journey(journeyStart, journeyEnd);
     }
 
     protected Journey createFakeJourney(long setStartTime, int setJourneyInMin, UUID cardExampleID, UUID readerOriginID, UUID readerDestinationID)
     {
-        FakeJourneyEvent journeyStart = new FakeJourneyEvent(cardExampleID, readerOriginID, setStartTime);
-        FakeJourneyEvent journeyEnd = new FakeJourneyEvent(cardExampleID, readerDestinationID, setStartTime + setJourneyInMin * 60 * 1000);
+        FakeJourneyEvent journeyStart = new FakeJourneyEvent(cardExampleID, readerOriginID, JourneyEvent.START, setStartTime);
+        FakeJourneyEvent journeyEnd = new FakeJourneyEvent(cardExampleID, readerDestinationID, JourneyEvent.END, setStartTime + setJourneyInMin * 60 * 1000);
         return new Journey(journeyStart, journeyEnd);
     }
 }

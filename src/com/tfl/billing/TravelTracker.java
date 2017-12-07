@@ -3,24 +3,25 @@ package com.tfl.billing;
 import com.oyster.OysterCardReader;
 import com.oyster.ScanListener;
 import com.tfl.external.Customer;
-import com.tfl.external.CustomerDatabase;
 
 import java.math.BigDecimal;
 import java.util.*;
 
 public class TravelTracker implements ScanListener
 {
-    private final List<JourneyEventInterface> eventLog = new ArrayList<JourneyEventInterface>();
-    private final Set<UUID> currentlyTravelling = new HashSet<UUID>();
+    private final Set<UUID> currentlyTravelling = new HashSet<>();
+    private final HashMap<UUID, List<JourneyEventInterface>> customerLog = new HashMap<>();
 
     private Database customerDatabase;
     private PaymentService paymentService;
+
 
     public TravelTracker()
     {
         this.customerDatabase = CustomerDBAdapter.getInstance();
         this.paymentService = PaymentAdapter.getInstance();
     }
+
 
     public TravelTracker(Database customerDatabase, PaymentService paymentService)
     {
@@ -39,9 +40,12 @@ public class TravelTracker implements ScanListener
 
     private void totalJourneysFor(Customer customer)
     {
+        customerLog.putIfAbsent(customer.cardId(), new ArrayList<>());
+
         Itinerary itinerary = new Itinerary();
-        itinerary.generateItinerary(customer, eventLog);
+        itinerary.generateItinerary(customerLog.get(customer.cardId()));
         List<Journey> journeys = itinerary.getJourneys();
+
 
         BigDecimal customerTotal = JourneyPriceCalculator.TotalJourneyPrice(journeys);
 
@@ -62,14 +66,15 @@ public class TravelTracker implements ScanListener
     {
         if (currentlyTravelling.contains(cardId))
         {
-            eventLog.add(new JourneyEnd(cardId, readerId));
+            customerLog.get(cardId).add(new JourneyEvent(cardId, readerId, JourneyEvent.END));
             currentlyTravelling.remove(cardId);
         } else
         {
-            if (CustomerDatabase.getInstance().isRegisteredId(cardId))
+            if (customerDatabase.isRegisteredId(cardId))
             {
                 currentlyTravelling.add(cardId);
-                eventLog.add(new JourneyStart(cardId, readerId));
+                customerLog.putIfAbsent(cardId, new ArrayList<>());
+                customerLog.get(cardId).add(new JourneyEvent(cardId, readerId, JourneyEvent.START));
             } else
             {
                 throw new UnknownOysterCardException(cardId);
