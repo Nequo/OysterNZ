@@ -4,7 +4,6 @@ import com.oyster.OysterCardReader;
 import com.oyster.ScanListener;
 import com.tfl.external.Customer;
 
-import java.math.BigDecimal;
 import java.util.*;
 
 public class TravelTracker implements ScanListener
@@ -46,10 +45,7 @@ public class TravelTracker implements ScanListener
         itinerary.generateItinerary(customerLog.get(customer.cardId()));
         List<Journey> journeys = itinerary.getJourneys();
 
-
-        BigDecimal customerTotal = JourneyPriceCalculator.TotalJourneyPrice(journeys);
-
-        paymentService.charge(customer, journeys, customerTotal);
+        paymentService.charge(customer, journeys, JourneyPriceCalculator.TotalPriceFor(journeys));
     }
 
 

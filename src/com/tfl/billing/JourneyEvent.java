@@ -12,6 +12,7 @@ public class JourneyEvent
     private final UUID cardId;
     private final UUID readerId;
     private final long time;
+
     private final int eventType;
 
     public JourneyEvent(UUID cardId, UUID readerId, int eventType)

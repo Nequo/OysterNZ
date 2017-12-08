@@ -17,7 +17,7 @@ public class JourneyPriceCalculator
     static private final int LONG_JOURNEY_MINIMUM_DURATION_IN_MIN = 25;
 
 
-    static public BigDecimal TotalJourneyPrice(List<Journey> journeys)
+    static public BigDecimal TotalPriceFor(List<Journey> journeys)
     {
         boolean wasAnyJourneyPeak = false;
 

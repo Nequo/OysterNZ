@@ -24,14 +24,6 @@ public class TravelTrackerTest
     PaymentService payment = context.mock(PaymentService.class);
     Database database = context.mock(Database.class);
     TravelTracker travelTracker = new TravelTracker(database, payment);
-    private final UUID cardExampleID = UUID.randomUUID();
-    private final UUID readerOriginID = UUID.randomUUID();
-    private final UUID readerDestinationID = UUID.randomUUID();
-    private final long startTime = 1493701200000L;
-    private final int journeyLengthInMin = 1;
-    private final Journey journey = new FakeJourneyCreator().createFakeJourney
-            (startTime, journeyLengthInMin, cardExampleID, readerOriginID, readerDestinationID);
-
 
     private List<Customer> customers = new ArrayList<Customer>()
     {
@@ -71,7 +63,7 @@ public class TravelTrackerTest
 
 
     @Test
-    public void eachCustomerInTheListIsChargedOnce()
+    public void eachCustomerInTheListIsChargedOnlyOnce()
     {
         context.checking(new Expectations()
         {{

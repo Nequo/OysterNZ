@@ -12,10 +12,6 @@ public class CustomerDBAdapter implements Database
     private static CustomerDBAdapter instance = new CustomerDBAdapter();
     private CustomerDatabase customerDatabase = CustomerDatabase.getInstance();
 
-    private CustomerDBAdapter()
-    {
-    }
-
     public static CustomerDBAdapter getInstance()
     {
         return instance;
