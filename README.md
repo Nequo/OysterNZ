@@ -1,3 +1,3 @@
 # OysterNZ
-Nadim Edde Gomez
+Nadim Edde Gomez,
 Zakhar Borok
